@@ -39,7 +39,7 @@ func cleanLink(u *url.URL, v string) string {
 			return ""
 		}
 	}
-	if !acceptableUriSchemes[p.Scheme] {
+	if !AcceptableURISchemes[p.Scheme] {
 		return ""
 	}
 
@@ -58,7 +58,7 @@ func cleanAttributes(u *url.URL, t *html.Token) {
 		} else if a.Key == "style" {
 			a.Val = cleanStyle(a.Val)
 			attrs = append(attrs, a)
-		} else if acceptableAttributes[a.Key] {
+		} else if AcceptableAttributes[a.Key] {
 			if a.Key == "href" || a.Key == "src" {
 				a.Val = cleanLink(u, a.Val)
 			}
@@ -100,8 +100,8 @@ func Clean(s string, u *url.URL) (string, string) {
 
 		t := z.Token()
 		if t.Type == html.StartTagToken || t.Type == html.SelfClosingTagToken {
-			if !acceptableElements[t.Data] {
-				if unacceptableElementsWithEndTag[t.Data] && t.Type != html.SelfClosingTagToken {
+			if !AcceptableElements[t.Data] {
+				if UnacceptableElementsWithEndTag[t.Data] && t.Type != html.SelfClosingTagToken {
 					skip += 1
 				}
 			} else {
@@ -109,8 +109,8 @@ func Clean(s string, u *url.URL) (string, string) {
 				buf.WriteString(t.String())
 			}
 		} else if t.Type == html.EndTagToken {
-			if !acceptableElements[t.Data] {
-				if unacceptableElementsWithEndTag[t.Data] {
+			if !AcceptableElements[t.Data] {
+				if UnacceptableElementsWithEndTag[t.Data] {
 					skip -= 1
 				}
 			} else {
@@ -129,7 +129,7 @@ func Clean(s string, u *url.URL) (string, string) {
 
 // Based on list from MDN's HTML5 element list
 // https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/HTML5_element_list
-var acceptableElements = map[string]bool{
+var AcceptableElements = map[string]bool{
 	// Root element
 	// "html": true,
 
@@ -264,7 +264,7 @@ var acceptableElements = map[string]bool{
 	// "menu":     true,
 }
 
-var unacceptableElementsWithEndTag = map[string]bool{
+var UnacceptableElementsWithEndTag = map[string]bool{
 	"script": true,
 	"applet": true,
 	"style":  true,
@@ -272,7 +272,7 @@ var unacceptableElementsWithEndTag = map[string]bool{
 
 // Based on list from MDN's HTML attribute reference
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
-var acceptableAttributes = map[string]bool{
+var AcceptableAttributes = map[string]bool{
 	"accept":         true,
 	"accept-charset": true,
 	// "accesskey":       true,
@@ -406,7 +406,7 @@ var acceptableAttributes = map[string]bool{
 
 // Based on list from Wikipedia's URI scheme
 // http://en.wikipedia.org/wiki/URI_scheme
-var acceptableUriSchemes = map[string]bool{
+var AcceptableURISchemes = map[string]bool{
 	"aim":      true,
 	"apt":      true,
 	"bitcoin":  true,
